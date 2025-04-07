@@ -1,103 +1,123 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [formData, setFormData] = useState({
+    email: "",
+    appPassword: "",
+    subject: "",
+    body: "",
+    cv: null as File | null,
+    referenceLetter: null as File | null,
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = e.target;
+    if (files && files.length > 0) {
+      setFormData({ ...formData, [name]: files[0] });
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const data = new FormData();
+    data.append("email", formData.email);
+    data.append("appPassword", formData.appPassword);
+    data.append("subject", formData.subject);
+    data.append("body", formData.body);
+    if (formData.cv) data.append("cv", formData.cv);
+    if (formData.referenceLetter) data.append("referenceLetter", formData.referenceLetter);
+
+    try {
+      const res = await fetch("/api/send-bulk-email", {
+        method: "POST",
+        body: data,
+      });
+
+      if (res.ok) {
+        alert("Emails sent successfully!");
+      } else {
+        alert("Error sending emails.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to send request.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-2xl">
+        <h1 className="text-2xl font-bold mb-6 text-center">Bulk Email Sender</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="email"
+            name="email"
+            placeholder="Your Gmail Address"
+            required
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            name="appPassword"
+            placeholder="App Password"
+            required
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="subject"
+            placeholder="Email Subject"
+            required
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onChange={handleChange}
+          />
+          <textarea
+            name="body"
+            placeholder="Email Body"
+            rows={6}
+            required
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onChange={handleChange}
+          />
+          <div>
+            <label className="block mb-1 font-medium">Upload CV (PDF)</label>
+            <input
+              type="file"
+              name="cv"
+              accept=".pdf"
+              required
+              onChange={handleFileChange}
+              className="w-full"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Upload Reference Letter (PDF)</label>
+            <input
+              type="file"
+              name="referenceLetter"
+              accept=".pdf"
+              required
+              onChange={handleFileChange}
+              className="w-full"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            Send Bulk Email
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
