@@ -28,26 +28,38 @@ export default function Home() {
 
     const data = new FormData();
     data.append("email", formData.email);
-    data.append("appPassword", formData.appPassword);
+    data.append("password", formData.appPassword); // backend expects `password`, not `appPassword`
     data.append("subject", formData.subject);
     data.append("body", formData.body);
-    if (formData.cv) data.append("cv", formData.cv);
-    if (formData.referenceLetter) data.append("referenceLetter", formData.referenceLetter);
+
+    if (formData.cv) {
+      data.append("cv", formData.cv, formData.cv.name);
+    }
+
+    if (formData.referenceLetter) {
+      data.append("reference_letter", formData.referenceLetter, formData.referenceLetter.name);
+    }
 
     try {
-      const res = await fetch("/api/send-bulk-email", {
+      const res = await fetch("http://localhost:8000/send-mails", {
         method: "POST",
+        headers: {
+          "Authorization": "Bearer supersecrettoken123", // like in your curl request
+          // ❌ DO NOT set "Content-Type" here — let fetch set it with the proper boundary
+        },
         body: data,
       });
 
       if (res.ok) {
         alert("Emails sent successfully!");
       } else {
-        alert("Error sending emails.");
+        const errorText = await res.text();
+        console.error("Server error:", errorText);
+        alert("Server error: " + errorText);
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to send request.");
+      console.error("Request failed:", error);
+      alert("Request failed: " + error);
     }
   };
 
