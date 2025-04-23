@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import TextEditor from "../components/TextEditor";
-import FilterSelector from "../components/FilterSelector";
+import TextEditor from "./TextEditor";
+import FilterSelector from "./FilterSelector";
 import axios from "axios";
-import FileUploader from "../components/FileUploader";
+import FileUploader from "./FileUploader";
 
 const Form = () => {
   const steps = ["Sender Info", "Filters", "Content"];
