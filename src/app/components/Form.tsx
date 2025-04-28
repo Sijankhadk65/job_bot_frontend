@@ -14,7 +14,7 @@ const Form = () => {
   const [subject, setSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
   const [locationFilters, setLocationFilters] = useState<string[]>([]);
-  const locationOptions = [""];
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
   const [categoriesFilters, setCategoriesFilters] = useState<string[]>([]);
   const [categoriesOptions, setCategoriesOptions] = useState<string[]>([]);
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -33,7 +33,22 @@ const Form = () => {
       }
     };
 
+    const fetchRegions = async () => {
+      try {
+        const regionsRequest = await axios.get("http://127.0.0.1:8000/regions");
+        setLocationOptions(
+          regionsRequest.data.data.map((region: any) => region.region)
+        );
+        console.log(
+          regionsRequest.data.data.map((region: any) => region.region)
+        );
+      } catch (err) {
+        console.error("Failed to load locations:", err);
+      }
+    };
+
     fetchCategories();
+    fetchRegions();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +62,10 @@ const Form = () => {
 
     categoriesFilters.forEach((category) => {
       formData.append("categories", category);
+    });
+
+    locationFilters.forEach((region) => {
+      formData.append("regions", region);
     });
 
     attachments.forEach((file) => {
