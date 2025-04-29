@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 interface FileUploaderProps {
   label: string;
@@ -7,8 +7,6 @@ interface FileUploaderProps {
 
 const FileUploader = ({ label, onFilesChange }: FileUploaderProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const selectedFiles = Array.from(e.target.files);

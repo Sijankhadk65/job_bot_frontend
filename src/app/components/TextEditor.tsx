@@ -5,7 +5,7 @@ import OrderedList from "@tiptap/extension-ordered-list";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
-import { EditorContent, useEditor, Editor } from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import MenuBar from "./MenuBar";
 

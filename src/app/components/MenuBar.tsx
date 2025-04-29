@@ -14,7 +14,6 @@ import {
   Redo,
   Link,
   Link2Off,
-  Code,
 } from "lucide-react";
 
 interface MenuBarProps {

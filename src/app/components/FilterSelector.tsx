@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { useState, forwardRef, useImperativeHandle } from "react";
+import { useState } from "react";
 
 interface FilterProps {
   options: string[];

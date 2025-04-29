@@ -1,8 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextEditor from "./TextEditor";
 import FilterSelector from "./FilterSelector";
 import axios from "axios";
 import FileUploader from "./FileUploader";
+
+interface Category {
+  _id: string;
+  category: string;
+  codes: string[];
+}
+
+interface Region {
+  _id: string;
+  region: string;
+}
 
 const Form = () => {
   const steps = ["Sender Info", "Filters", "Content"];
@@ -26,7 +37,9 @@ const Form = () => {
           "http://127.0.0.1:8000/categories"
         );
         setCategoriesOptions(
-          categoriesRequest.data.data.map((category: any) => category.category)
+          categoriesRequest.data.data.map(
+            (category: Category) => category.category
+          )
         );
       } catch (err) {
         console.error("Failed to load locations:", err);
@@ -37,10 +50,7 @@ const Form = () => {
       try {
         const regionsRequest = await axios.get("http://127.0.0.1:8000/regions");
         setLocationOptions(
-          regionsRequest.data.data.map((region: any) => region.region)
-        );
-        console.log(
-          regionsRequest.data.data.map((region: any) => region.region)
+          regionsRequest.data.data.map((region: Region) => region.region)
         );
       } catch (err) {
         console.error("Failed to load locations:", err);
@@ -73,15 +83,11 @@ const Form = () => {
     });
 
     try {
-      const request = await axios.post(
-        "http://127.0.0.1:8000/send_emails",
-        formData,
-        {
-          headers: {
-            Authorization: "Bearer supersecrettoken123",
-          },
-        }
-      );
+      await axios.post("http://127.0.0.1:8000/send_emails", formData, {
+        headers: {
+          Authorization: "Bearer supersecrettoken123",
+        },
+      });
     } catch (error) {
       console.error("Error sending email:", error);
     }
