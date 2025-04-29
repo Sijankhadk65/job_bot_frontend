@@ -34,7 +34,7 @@ const Form = () => {
     const fetchCategories = async () => {
       try {
         const categoriesRequest = await axios.get(
-          "http://127.0.0.1:8000/categories"
+          "http://16.171.110.45:8000/categories"
         );
         setCategoriesOptions(
           categoriesRequest.data.data.map(
@@ -48,7 +48,9 @@ const Form = () => {
 
     const fetchRegions = async () => {
       try {
-        const regionsRequest = await axios.get("http://127.0.0.1:8000/regions");
+        const regionsRequest = await axios.get(
+          "http://16.171.110.45:8000/regions"
+        );
         setLocationOptions(
           regionsRequest.data.data.map((region: Region) => region.region)
         );
